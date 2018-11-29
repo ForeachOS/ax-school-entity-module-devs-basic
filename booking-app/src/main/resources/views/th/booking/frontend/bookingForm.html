@@ -29,7 +29,7 @@
         <select id="ticketType" class="form-control" th:field="*{ticketType}">
             <option th:each="type : ${ticketTypes}"
                     th:value="${type}"
-                    th:text="#{${'ticketType.' + type}}">Wireframe
+                    th:text="#{${'enums.TicketType.' + type}}">Wireframe
             </option>
         </select>
 
