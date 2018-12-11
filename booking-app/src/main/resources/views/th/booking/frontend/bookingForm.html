@@ -14,10 +14,7 @@
         </p>
     </div>
 
-    <div class="form-group">
-        <label for="name">Name *</label>
-        <input id="name" type="text" class="form-control" th:field="*{name}"/>
-    </div>
+    <across:view element="${nameField}" />
 
     <div class="form-group">
         <label for="email">Email *</label>

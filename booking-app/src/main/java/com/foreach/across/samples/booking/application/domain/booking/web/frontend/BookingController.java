@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.ZonedDateTime;
 
+import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.formGroup;
+import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.textbox;
+
 @Controller
 @Template(FrontendLayout.TEMPLATE)
 @RequestMapping("/")
@@ -27,6 +30,15 @@ class BookingController
 	@GetMapping
 	String bookingForm( @ModelAttribute("booking") Booking booking, Model model ) {
 		model.addAttribute( "ticketTypes", TicketType.values() );
+
+		model.addAttribute(
+				"nameField",
+				formGroup()
+						.label( "Name" )
+						.control( textbox().controlName( "name" ).text( booking.getName() ) )
+						.required()
+						.build()
+		);
 
 		return "th/booking/frontend/bookingForm";
 	}
