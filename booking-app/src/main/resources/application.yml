@@ -26,3 +26,7 @@ adminWebModule:
 
 musicalService:
   url: http://localhost:8099
+
+entityModule:
+  message-codes:
+    BookingApplicationModule: model

@@ -7,36 +7,7 @@
 <h1>Book tickets for our musical</h1>
 
 <form th:action="@{/}" method="post" th:object="${booking}" novalidate>
-
-    <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
-        <p th:each="e : ${#fields.detailedErrors()}" th:class="${e.global}? globalerr : fielderr">
-            <span th:text="${e.global}? '*' : ${e.fieldName}">The field name</span>: <span th:text="${e.message}">The error message</span>
-        </p>
-    </div>
-
-    <across:view element="${nameField}" />
-
-    <div class="form-group">
-        <label for="email">Email *</label>
-        <input id="email" type="text" class="form-control" th:field="*{email}"/>
-    </div>
-
-    <div class="form-group">
-        <label for="ticketType">Type of tickets</label>
-        <select id="ticketType" class="form-control" th:field="*{ticketType}">
-            <option th:each="type : ${ticketTypes}"
-                    th:value="${type}"
-                    th:text="#{${'enums.TicketType.' + type}}">Wireframe
-            </option>
-        </select>
-
-    </div>
-
-    <div class="form-group">
-        <label for="tickets">Number of tickets</label>
-        <input id="tickets" type="text" class="form-control" th:field="*{numberOfTickets}"/>
-    </div>
-
+    <across:view element="${formFields}" />
     <button type="submit" class="btn btn-primary">Book tickets</button>
 </form>
 

@@ -32,6 +32,7 @@ public class Booking implements Persistable<Long>, EntityWithDto<Booking>
 	private Long id;
 
 	@NotBlank
+	@Length(max = 255)
 	private String name;
 
 	@NotBlank

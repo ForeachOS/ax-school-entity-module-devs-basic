@@ -1,9 +1,13 @@
 package com.foreach.across.samples.booking.application.domain.booking.web.frontend;
 
+import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
+import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.helpers.EntityViewElementBatch;
 import com.foreach.across.modules.web.template.Template;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.BookingRepository;
-import com.foreach.across.samples.booking.application.domain.booking.TicketType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 
-import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.formGroup;
-import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.textbox;
+import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.container;
 
 @Controller
 @Template(FrontendLayout.TEMPLATE)
@@ -26,19 +30,16 @@ import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilder
 class BookingController
 {
 	private final BookingRepository bookingRepository;
+	private final EntityViewElementBuilderHelper entityViewElementBuilderHelper;
 
 	@GetMapping
 	String bookingForm( @ModelAttribute("booking") Booking booking, Model model ) {
-		model.addAttribute( "ticketTypes", TicketType.values() );
+		EntityViewElementBatch<Booking> batch = entityViewElementBuilderHelper.createBatchForEntity( booking );
+		batch.setViewElementMode( ViewElementMode.FORM_WRITE );
+		batch.setPropertySelector( EntityPropertySelector.of( "name", "email", "ticketType", "numberOfTickets" ) );
+		Map<String, ViewElement> fieldsByName = batch.build();
 
-		model.addAttribute(
-				"nameField",
-				formGroup()
-						.label( "Name" )
-						.control( textbox().controlName( "name" ).text( booking.getName() ) )
-						.required()
-						.build()
-		);
+		model.addAttribute( "formFields", container().addAll( fieldsByName.values() ).build() );
 
 		return "th/booking/frontend/bookingForm";
 	}
