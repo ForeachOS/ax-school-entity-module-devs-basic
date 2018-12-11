@@ -8,14 +8,12 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.domain.Persistable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * A single show booking.
@@ -54,6 +52,9 @@ public class Booking implements Persistable<Long>, EntityWithDto<Booking>
 
 	@OneToOne
 	private Invoice invoice;
+
+	@ElementCollection
+	private List<BookingFollowup> followUp;
 
 	@Override
 	public Booking toDto() {

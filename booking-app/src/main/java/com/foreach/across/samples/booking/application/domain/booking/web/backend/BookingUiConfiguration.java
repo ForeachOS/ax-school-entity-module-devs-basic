@@ -70,6 +70,9 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                      .and()
 				                      .property( "invoice.invoiceStatus" )
 				                      .writable( false )
+				                      .and()
+				                      .property( "followUp" )
+				                      .hidden( true )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
@@ -89,7 +92,7 @@ public class BookingUiConfiguration implements EntityConfigurer
 		        .formView(
 				        "invoice", EntityViewCustomizers.basicSettings()
 				                                        .adminMenu( "/invoice" )
-				                                        .andThen( fvb -> fvb.showProperties( "invoice.*" ) )
+				                                        .andThen( fvb -> fvb.showProperties( "invoice.*", "followUp" ) )
 		        )
 		        .association(
 				        as -> as.name( "seat.booking" )
