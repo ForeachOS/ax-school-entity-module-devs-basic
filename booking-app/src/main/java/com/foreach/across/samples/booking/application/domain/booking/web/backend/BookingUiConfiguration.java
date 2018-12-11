@@ -6,16 +6,22 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.query.EntityQueryConditionTranslator;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
+import com.foreach.across.modules.entity.registry.properties.EntityPropertyHandlingType;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.registry.properties.EntityPropertyValidator;
 import com.foreach.across.modules.entity.views.EntityViewCustomizers;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
+import com.foreach.across.samples.modules.invoice.domain.invoice.Invoice;
+import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceRepository;
+import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.data.domain.Sort;
+import org.springframework.validation.Validator;
 
 import java.util.List;
 
@@ -24,6 +30,8 @@ import java.util.List;
 public class BookingUiConfiguration implements EntityConfigurer
 {
 	private final SeatRepository seatRepository;
+	private final InvoiceRepository invoiceRepository;
+	private final Validator entityValidator;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -47,6 +55,21 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                      .and()
 				                      .property( "invoice" )
 				                      .hidden( true )
+				                      .attribute( EntityPropertyHandlingType.class, EntityPropertyHandlingType.BINDER )
+				                      .controller(
+						                      c -> c.withTarget( Booking.class, Invoice.class )
+						                            .createValueFunction( booking -> Invoice.builder()
+						                                                                    .name( booking.getName() )
+						                                                                    .email( booking.getEmail() )
+						                                                                    .amount( booking.getNumberOfTickets() * 15.0 )
+						                                                                    .invoiceStatus( InvoiceStatus.SENT )
+						                                                                    .build() )
+						                            .validator( EntityPropertyValidator.of( entityValidator ) )
+						                            .saveConsumer( ( booking, invoice ) -> invoiceRepository.save( invoice.getNewValue() ) )
+				                      )
+				                      .and()
+				                      .property( "invoice.invoiceStatus" )
+				                      .writable( false )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
