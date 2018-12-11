@@ -35,11 +35,18 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                      .and()
 				                      .property( "name" )
 				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() )
+				                      .and()
+				                      .property( "email" )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() )
+				                      .and()
+				                      .property( "searchText" )
+				                      .propertyType( String.class )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.expandingOr( "name", "email" ) )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
 				                  .defaultSort( new Sort( Sort.Direction.DESC, "created" ) )
-				                  .entityQueryFilter( eqf -> eqf.showProperties( "ticketType", "name" ).multiValue( "ticketType" ) )
+				                  .entityQueryFilter( eqf -> eqf.showProperties( "ticketType", "searchText" ).multiValue( "ticketType" ) )
 		        )
 		        .createFormView(
 				        fvb -> fvb.properties(
