@@ -4,6 +4,7 @@ import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.query.EntityQueryConditionTranslator;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
@@ -31,10 +32,14 @@ public class BookingUiConfiguration implements EntityConfigurer
 				        props -> props.property( "seats" )
 				                      .propertyType( TypeDescriptor.collection( List.class, TypeDescriptor.valueOf( Seat.class ) ) )
 				                      .valueFetcher( seatRepository::findAllByBooking )
+				                      .and()
+				                      .property( "name" )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
 				                  .defaultSort( new Sort( Sort.Direction.DESC, "created" ) )
+				                  .entityQueryFilter( eqf -> eqf.showProperties( "ticketType", "name" ).multiValue( "ticketType" ) )
 		        )
 		        .createFormView(
 				        fvb -> fvb.properties(
