@@ -7,17 +7,31 @@ import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBu
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
+import com.foreach.across.samples.booking.application.domain.booking.Seat;
+import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 @Configuration
+@RequiredArgsConstructor
 public class BookingUiConfiguration implements EntityConfigurer
 {
+	private final SeatRepository seatRepository;
+
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( Booking.class )
 		        .attribute( EntityAttributes.LINK_TO_DETAIL_VIEW, true )
+		        .properties(
+				        props -> props.property( "seats" )
+				                      .propertyType( TypeDescriptor.collection( List.class, TypeDescriptor.valueOf( Seat.class ) ) )
+				                      .valueFetcher( seatRepository::findAllByBooking )
+		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
 				                  .defaultSort( new Sort( Sort.Direction.DESC, "created" ) )
