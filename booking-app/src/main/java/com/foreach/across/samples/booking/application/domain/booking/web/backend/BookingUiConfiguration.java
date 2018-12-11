@@ -4,6 +4,7 @@ import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,13 @@ public class BookingUiConfiguration implements EntityConfigurer
 		        .updateFormView(
 				        fvb -> fvb.properties( props -> props.property( "created" ).writable( false ) )
 				                  .showProperties( EntityPropertySelector.WRITABLE, "created" )
-		        );
+		        )
+		        .association(
+				        as -> as.name( "seat.booking" )
+				                .associationType( EntityAssociation.Type.EMBEDDED )
+				                .parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
+		        )
+		;
 	}
 
 	@EventListener
