@@ -7,6 +7,7 @@ import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBu
 import com.foreach.across.modules.entity.query.EntityQueryConditionTranslator;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.views.EntityViewCustomizers;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
@@ -42,6 +43,10 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                      .property( "searchText" )
 				                      .propertyType( String.class )
 				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.expandingOr( "name", "email" ) )
+				                      .hidden( true )
+				                      .and()
+				                      .property( "invoice" )
+				                      .hidden( true )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
@@ -57,6 +62,11 @@ public class BookingUiConfiguration implements EntityConfigurer
 		        .updateFormView(
 				        fvb -> fvb.properties( props -> props.property( "created" ).writable( false ) )
 				                  .showProperties( EntityPropertySelector.WRITABLE, "created" )
+		        )
+		        .formView(
+				        "invoice", EntityViewCustomizers.basicSettings()
+				                                        .adminMenu( "/invoice" )
+				                                        .andThen( fvb -> fvb.showProperties( "invoice.*" ) )
 		        )
 		        .association(
 				        as -> as.name( "seat.booking" )

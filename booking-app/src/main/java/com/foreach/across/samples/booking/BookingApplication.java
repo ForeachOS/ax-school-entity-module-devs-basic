@@ -6,7 +6,9 @@ import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.samples.modules.invoice.InvoiceModule;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.annotation.Bean;
 
 @AcrossApplication(
 		modules = {
@@ -19,6 +21,11 @@ import org.springframework.boot.SpringApplication;
 )
 public class BookingApplication
 {
+	@Bean
+	public InvoiceModule invoiceModule() {
+		return new InvoiceModule();
+	}
+
 	public static void main( String[] args ) {
 		SpringApplication springApplication = new SpringApplication( BookingApplication.class );
 		springApplication.run( args );
