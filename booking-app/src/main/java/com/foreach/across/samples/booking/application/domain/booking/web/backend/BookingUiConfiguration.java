@@ -26,6 +26,7 @@ import com.foreach.across.samples.booking.application.domain.booking.SeatReposit
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.controls.BookingLinkBuilder;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingEmailViewProcessor;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingInvoiceViewProcessor;
+import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingPopupViewProcessor;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingSummaryViewProcessor;
 import com.foreach.across.samples.modules.invoice.domain.invoice.Invoice;
 import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceRepository;
@@ -130,6 +131,11 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                                                  item -> item.attribute( NavComponentBuilder.ATTR_ICON, new GlyphIcon( GlyphIcon.ENVELOPE ) ) )
 				                                      .andThen( EntityViewCustomizers.formSettings().forExtension( true ) )
 				                                      .andThen( vb -> vb.viewProcessor( new BookingEmailViewProcessor() ) )
+		        )
+		        .view(
+				        "popup",
+				        vb -> vb.showProperties( ":readable", "~invoice", "followUp" )
+				                .viewProcessor( new BookingPopupViewProcessor() )
 		        )
 		        .association(
 				        as -> as.name( "seat.booking" )
