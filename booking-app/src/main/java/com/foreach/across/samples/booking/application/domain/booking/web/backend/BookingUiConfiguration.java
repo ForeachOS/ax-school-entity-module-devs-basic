@@ -22,6 +22,7 @@ import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.controls.BookingLinkBuilder;
+import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingInvoiceViewProcessor;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingSummaryViewProcessor;
 import com.foreach.across.samples.modules.invoice.domain.invoice.Invoice;
 import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceRepository;
@@ -109,7 +110,8 @@ public class BookingUiConfiguration implements EntityConfigurer
 		        .formView(
 				        "invoice", EntityViewCustomizers.basicSettings()
 				                                        .adminMenu( "/invoice" )
-				                                        .andThen( fvb -> fvb.showProperties( "invoice.*", "followUp" ) )
+				                                        .andThen( fvb -> fvb.showProperties( "invoice.*", "followUp" )
+				                                                            .viewProcessor( new BookingInvoiceViewProcessor() ) )
 		        )
 		        .view(
 				        EntityView.SUMMARY_VIEW_NAME,
