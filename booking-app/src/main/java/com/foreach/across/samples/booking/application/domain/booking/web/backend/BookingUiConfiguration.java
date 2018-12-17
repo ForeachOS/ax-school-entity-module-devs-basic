@@ -10,8 +10,10 @@ import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyHandlingType;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyValidator;
+import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.EntityViewCustomizers;
 import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.bootstrapui.elements.ViewElementFieldset;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -19,6 +21,7 @@ import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.controls.BookingLinkBuilder;
+import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingSummaryViewProcessor;
 import com.foreach.across.samples.modules.invoice.domain.invoice.Invoice;
 import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceRepository;
 import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceStatus;
@@ -105,6 +108,14 @@ public class BookingUiConfiguration implements EntityConfigurer
 				        "invoice", EntityViewCustomizers.basicSettings()
 				                                        .adminMenu( "/invoice" )
 				                                        .andThen( fvb -> fvb.showProperties( "invoice.*", "followUp" ) )
+		        )
+		        .view(
+				        EntityView.SUMMARY_VIEW_NAME,
+				        vb -> vb.showProperties( "invoice", "followUp", "seats" )
+				                .properties( props -> props.property( "invoice" )
+				                                           .viewElementType( ViewElementMode.FORM_READ, ViewElementFieldset.ELEMENT_TYPE )
+				                                           .attribute( ViewElementFieldset.TEMPLATE, ViewElementFieldset.TEMPLATE_PANEL_DEFAULT ) )
+				                .viewProcessor( new BookingSummaryViewProcessor() )
 		        )
 		        .association(
 				        as -> as.name( "seat.booking" )
