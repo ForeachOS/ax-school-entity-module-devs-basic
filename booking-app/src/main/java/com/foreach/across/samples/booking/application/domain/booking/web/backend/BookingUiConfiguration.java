@@ -6,6 +6,8 @@ import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
+import com.foreach.across.modules.entity.actions.EntityConfigurationAllowableActionsBuilder;
+import com.foreach.across.modules.entity.actions.FixedEntityAllowableActionsBuilder;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.query.EntityQueryConditionTranslator;
@@ -17,6 +19,9 @@ import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.EntityViewCustomizers;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.bootstrapui.elements.ViewElementFieldset;
+import com.foreach.across.modules.spring.security.actions.AllowableAction;
+import com.foreach.across.modules.spring.security.actions.AuthorityMatchingAllowableActions;
+import com.foreach.across.modules.spring.security.authority.AuthorityMatcher;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -38,7 +43,9 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.Validator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -55,6 +62,7 @@ public class BookingUiConfiguration implements EntityConfigurer
 		        .attribute( EntityAttributes.LINK_TO_DETAIL_VIEW, true )
 		        .viewElementBuilder( ViewElementMode.VALUE, bookingLinkBuilder )
 		        .viewElementBuilder( ViewElementMode.LIST_VALUE, bookingLinkBuilder )
+		        .allowableActionsBuilder( bookingAllowableActionsBuilder() )
 		        .properties(
 				        props -> props.property( "seats" )
 				                      .propertyType( TypeDescriptor.collection( List.class, TypeDescriptor.valueOf( Seat.class ) ) )
@@ -143,6 +151,16 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                .parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 		        )
 		;
+	}
+
+	private EntityConfigurationAllowableActionsBuilder bookingAllowableActionsBuilder() {
+		Map<AllowableAction, AuthorityMatcher> actions = new HashMap<>();
+		actions.put( AllowableAction.CREATE, AuthorityMatcher.allOf( "booking-department" ) );
+		actions.put( AllowableAction.READ, AuthorityMatcher.allOf( "booking-department" ) );
+		actions.put( AllowableAction.DELETE, AuthorityMatcher.allOf( "booking-department" ) );
+		actions.put( AllowableAction.UPDATE, AuthorityMatcher.allOf( "booking-department" ) );
+
+		return new FixedEntityAllowableActionsBuilder( AuthorityMatchingAllowableActions.forSecurityContext( actions ) );
 	}
 
 	private Style resolveBookingRowStyle( Booking booking ) {
