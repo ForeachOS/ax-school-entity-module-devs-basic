@@ -1,6 +1,7 @@
 package com.foreach.across.samples.booking.application.domain.booking.web.backend;
 
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
+import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
@@ -93,6 +94,7 @@ public class BookingUiConfiguration implements EntityConfigurer
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
 				                  .defaultSort( new Sort( Sort.Direction.DESC, "created" ) )
 				                  .entityQueryFilter( eqf -> eqf.showProperties( "ticketType", "searchText" ).multiValue( "ticketType" ) )
+				                  .and( CommonViewConfigurations.withRowHighlighting( this::resolveBookingRowStyle ) )
 		        )
 		        .createFormView(
 				        fvb -> fvb.properties(
@@ -123,6 +125,23 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                .parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 		        )
 		;
+	}
+
+	private Style resolveBookingRowStyle( Booking booking ) {
+		Invoice invoice = booking.getInvoice();
+
+		if ( invoice == null ) {
+			return null;
+		}
+
+		switch ( invoice.getInvoiceStatus() ) {
+			case SENT:
+				return Style.DANGER;
+			case PAID:
+				return Style.SUCCESS;
+			default:
+				return Style.WARNING;
+		}
 	}
 
 	private void enableRichText( ViewElementBuilderContext builderContext, TextboxFormElement textbox ) {
