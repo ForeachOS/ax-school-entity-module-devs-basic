@@ -1,6 +1,7 @@
 package com.foreach.across.samples.booking.application.domain.booking.web.backend;
 
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
+import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
@@ -10,6 +11,10 @@ import com.foreach.across.modules.entity.registry.properties.EntityPropertyHandl
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyValidator;
 import com.foreach.across.modules.entity.views.EntityViewCustomizers;
+import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.web.resource.WebResource;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
@@ -73,6 +78,9 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                      .and()
 				                      .property( "followUp" )
 				                      .hidden( true )
+				                      .and()
+				                      .property( "followUp[].remarks" )
+				                      .viewElementPostProcessor( ViewElementMode.CONTROL, this::enableRichText )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( EntityPropertySelector.CONFIGURED, "~ticketType" )
@@ -100,6 +108,14 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                .parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 		        )
 		;
+	}
+
+	private void enableRichText( ViewElementBuilderContext builderContext, TextboxFormElement textbox ) {
+		textbox.setAttribute( "rich-text", true );
+
+		WebResourceRegistry webResourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
+		webResourceRegistry.add( WebResource.JAVASCRIPT, "https://cdn.ckeditor.com/ckeditor5/11.1.1/classic/ckeditor.js", WebResource.EXTERNAL );
+		webResourceRegistry.add( WebResource.JAVASCRIPT_PAGE_END, "/static/booking/js/rich-text.js", WebResource.VIEWS );
 	}
 
 	@EventListener
