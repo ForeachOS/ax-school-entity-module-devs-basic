@@ -1,6 +1,8 @@
 package com.foreach.across.samples.booking.application.domain.booking.web.backend;
 
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
+import com.foreach.across.modules.bootstrapui.components.builder.NavComponentBuilder;
+import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
@@ -22,6 +24,7 @@ import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.controls.BookingLinkBuilder;
+import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingEmailViewProcessor;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingInvoiceViewProcessor;
 import com.foreach.across.samples.booking.application.domain.booking.web.backend.views.BookingSummaryViewProcessor;
 import com.foreach.across.samples.modules.invoice.domain.invoice.Invoice;
@@ -120,6 +123,13 @@ public class BookingUiConfiguration implements EntityConfigurer
 				                                           .viewElementType( ViewElementMode.FORM_READ, ViewElementFieldset.ELEMENT_TYPE )
 				                                           .attribute( ViewElementFieldset.TEMPLATE, ViewElementFieldset.TEMPLATE_PANEL_DEFAULT ) )
 				                .viewProcessor( new BookingSummaryViewProcessor() )
+		        )
+		        .formView(
+				        "email", EntityViewCustomizers.basicSettings()
+				                                      .adminMenu( "/advanced-options/email",
+				                                                  item -> item.attribute( NavComponentBuilder.ATTR_ICON, new GlyphIcon( GlyphIcon.ENVELOPE ) ) )
+				                                      .andThen( EntityViewCustomizers.formSettings().forExtension( true ) )
+				                                      .andThen( vb -> vb.viewProcessor( new BookingEmailViewProcessor() ) )
 		        )
 		        .association(
 				        as -> as.name( "seat.booking" )
