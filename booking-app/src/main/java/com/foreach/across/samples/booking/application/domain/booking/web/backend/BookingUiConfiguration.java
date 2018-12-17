@@ -18,6 +18,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.samples.booking.application.domain.booking.Booking;
 import com.foreach.across.samples.booking.application.domain.booking.Seat;
 import com.foreach.across.samples.booking.application.domain.booking.SeatRepository;
+import com.foreach.across.samples.booking.application.domain.booking.web.backend.controls.BookingLinkBuilder;
 import com.foreach.across.samples.modules.invoice.domain.invoice.Invoice;
 import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceRepository;
 import com.foreach.across.samples.modules.invoice.domain.invoice.InvoiceStatus;
@@ -37,11 +38,14 @@ public class BookingUiConfiguration implements EntityConfigurer
 	private final SeatRepository seatRepository;
 	private final InvoiceRepository invoiceRepository;
 	private final Validator entityValidator;
+	private final BookingLinkBuilder bookingLinkBuilder;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( Booking.class )
 		        .attribute( EntityAttributes.LINK_TO_DETAIL_VIEW, true )
+		        .viewElementBuilder( ViewElementMode.VALUE, bookingLinkBuilder )
+		        .viewElementBuilder( ViewElementMode.LIST_VALUE, bookingLinkBuilder )
 		        .properties(
 				        props -> props.property( "seats" )
 				                      .propertyType( TypeDescriptor.collection( List.class, TypeDescriptor.valueOf( Seat.class ) ) )
